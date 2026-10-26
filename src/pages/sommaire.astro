@@ -1,5 +1,7 @@
 ---
 import BookLayout from "../layouts/BookLayout.astro";
+import ScrollJump from "../components/ScrollJump.astro";
+import "../styles/summary.css";
 import {
   getSessionNumbers,
   getSessionTexts,
@@ -25,7 +27,7 @@ for (const session of sessionNumbers) {
 ---
 <BookLayout
   title="Contes et légendes de la Côte des épées · Sommaire"
-  eyebrow="Chroniques des Royaumes oubliés · Sommaire"
+  eyebrow="Sommaire"
 >
   <nav class="toc" aria-label="Sommaire">
     {
@@ -37,11 +39,11 @@ for (const session of sessionNumbers) {
           <ul>
             {texts.map(({ text, page }) => (
               <li>
-                <a class="toc-entry" href={textUrl(session, text.id)}>
-                  <span class="toc-title">{text.data.title}</span>
+                <div class="toc-entry">
+                  <span>{text.data.title}</span>
                   <span class="toc-leader" aria-hidden="true" />
                   <span class="toc-page">{page}</span>
-                </a>
+                </div>
               </li>
             ))}
           </ul>
@@ -49,4 +51,5 @@ for (const session of sessionNumbers) {
       ))
     }
   </nav>
+  <ScrollJump />
 </BookLayout>

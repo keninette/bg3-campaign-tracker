@@ -1,34 +1,19 @@
 ---
-import BookLayout from "../layouts/BookLayout.astro";
-import DeskInk from "../components/DeskInk.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import "../styles/index.css";
 import { pageUrl } from "../lib/sessions";
 ---
-<BookLayout
-  desk
-  title="Contes et légendes de la Côte des épées"
->
-  <h1 class="sr-only">Contes et légendes de la Côte des épées</h1>
-  <div class="desk">
-    <a class="tome" href={pageUrl("sommaire")}>
-      <span class="tome-band" aria-hidden="true"></span>
-      <span class="tome-title">Contes et légendes de la Côte des Épées</span>
-      <span class="tome-ornament" aria-hidden="true">✦</span>
-      <span class="tome-volume">Vol. XI</span>
-      <span class="tome-band tome-band-low" aria-hidden="true"></span>
-    </a>
-
-    <a class="folder" href={pageUrl("extraits")}>
-      <span class="folder-papers" aria-hidden="true">
-        <span class="sheet sheet-1"></span>
-        <span class="sheet sheet-2"></span>
-        <span class="sheet sheet-3"></span>
-      </span>
-      <span class="folder-cover">
-        <span class="folder-strap" aria-hidden="true"></span>
-        <span class="folder-note">Extraits</span>
-      </span>
-    </a>
-
-    <DeskInk />
-  </div>
-</BookLayout>
+<BaseLayout title="Contes et légendes de la Côte des épées">
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+  </Fragment>
+  <main>
+    <a href={pageUrl("sommaire")}>Contes et légendes de la Côte des Épées, Vol. XI</a>
+    <a href={pageUrl("extraits")}>Lore</a>
+  </main>
+</BaseLayout>

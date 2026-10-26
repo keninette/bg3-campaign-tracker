@@ -1,6 +1,6 @@
 ---
-import "../styles/book.css";
-import DeskGrain from "../components/DeskGrain.astro";
+import "../styles/page.css";
+import BaseLayout from "./BaseLayout.astro";
 import PaperStains from "../components/PaperStains.astro";
 import { homeUrl } from "../lib/sessions";
 
@@ -9,55 +9,30 @@ interface Props {
   eyebrow?: string;
   // Hides the book header (title, eyebrow, ornament).
   bare?: boolean;
-  // Renders the slot on the desk landing scene instead of a book page.
-  desk?: boolean;
 }
 
-const { title, eyebrow, bare = false, desk = false } = Astro.props;
+const { title, eyebrow, bare = false } = Astro.props;
 ---
-<html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{title}</title>
-    <meta
-      name="description"
-      content="Chroniques et souvenirs d'une aventure sur la Côte des Épées."
-    />
-  </head>
-  <body class={desk ? "desk-page" : undefined}>
-    {
-      desk && (
-        <main class="desktop">
-          <div class="desk-top">
-            <div class="desk-surface">
-              <DeskGrain />
-              <slot />
-            </div>
-          </div>
-        </main>
-      )
-    }
-    {
-      !desk && (
-        <main class="book-page">
-          <PaperStains />
-          {
-            !bare && (
-              <header class="book-header">
-                {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-                <h1>
-                  <a class="title-link" href={homeUrl} title="Retour à l'accueil">
-                    Contes et légendes de la Côte des épées
-                  </a>
-                </h1>
-                <div class="ornament" aria-hidden="true">✦</div>
-              </header>
-            )
-          }
-          <slot />
-        </main>
-      )
-    }
-  </body>
-</html>
+<BaseLayout title={title}>
+  <div class="book-scene">
+    <main class="book-page">
+      <div class="book-sheet">
+        <PaperStains />
+        {
+          !bare && (
+            <header class="book-header">
+              {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+              <h1>
+                <a class="title-link" href={homeUrl} title="Retour à l'accueil">
+                  Contes et légendes de la Côte des épées
+                </a>
+              </h1>
+              <div class="ornament" aria-hidden="true">✦</div>
+            </header>
+          )
+        }
+        <slot />
+      </div>
+    </main>
+  </div>
+</BaseLayout>

@@ -1,5 +1,6 @@
 ---
 import { render } from "astro:content";
+import { Image } from "astro:assets";
 import BookLayout from "../layouts/BookLayout.astro";
 import {
   getSessionNumbers,
@@ -40,6 +41,18 @@ const olderTitle = await firstTitle(older);
     rendered.map(({ text, Content }) => (
       <article class="chapter" id={textAnchor(text.id)}>
         <h2 class="chapter-label">{text.data.title}</h2>
+        {text.data.picture && (
+          <figure class="chapter-picture">
+            <button type="button" data-enlarge aria-label={`Agrandir l'image : ${text.data.title}`}>
+              <Image
+                src={text.data.picture}
+                alt={text.data.title}
+                widths={[480, 800, 1200, 1800]}
+                sizes="(max-width: 800px) 90vw, 40rem"
+              />
+            </button>
+          </figure>
+        )}
         <div class="chapter-body">
           <Content />
         </div>
@@ -67,4 +80,30 @@ const olderTitle = await firstTitle(older);
       )
     }
   </nav>
+
+  <dialog class="picture-dialog" id="picture-dialog" aria-label="Image agrandie">
+    <form method="dialog"><button>Fermer ✕</button></form>
+    <img alt="" />
+  </dialog>
 </BookLayout>
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>("#picture-dialog");
+  const big = dialog?.querySelector("img");
+
+  document.querySelectorAll<HTMLButtonElement>("[data-enlarge]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const img = button.querySelector("img");
+      if (!dialog || !big || !img) return;
+      big.alt = img.alt;
+      big.srcset = img.srcset;
+      big.sizes = "96vw";
+      big.src = img.currentSrc || img.src;
+      dialog.showModal();
+    });
+  });
+
+  // Clicking the backdrop closes the dialog
+  dialog?.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+</script>

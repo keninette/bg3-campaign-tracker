@@ -61,7 +61,7 @@ body {
 
 .book-header,
 .chapter,
-.book-footer {
+.book-nav {
   position: relative;
   z-index: 1;
 }
@@ -73,7 +73,7 @@ body {
 
 .eyebrow,
 .chapter-label,
-.book-footer {
+.book-nav {
   color: #79552f;
   font-size: 0.72rem;
   letter-spacing: 0.2em;
@@ -119,8 +119,13 @@ h1 {
   line-height: 1.9;
 }
 
-.chapter-label {
+.chapter + .chapter {
+  margin-top: 3rem;
+}
+
+h2.chapter-label {
   margin: 0 0 1.1rem;
+  font-weight: normal;
   text-align: center;
 }
 
@@ -130,7 +135,7 @@ h1 {
   hyphens: auto;
 }
 
-.chapter .opening::first-letter {
+.chapter-body > p:first-child::first-letter {
   float: left;
   margin: 0.1rem 0.55rem 0 0;
   color: #764726;
@@ -147,21 +152,48 @@ blockquote {
   font-style: italic;
 }
 
-blockquote p {
-  margin-bottom: 0.5rem !important;
+.chapter blockquote p {
+  margin-bottom: 0.5rem;
 }
 
-cite {
-  display: block;
+blockquote p:last-child:not(:first-child) {
   font-size: 0.9rem;
   text-align: right;
 }
 
-.book-footer {
+.book-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
   margin-top: 3rem;
   padding-top: 1.2rem;
   border-top: 1px solid #98734280;
-  text-align: center;
+}
+
+.book-nav a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.book-nav a[rel="next"] {
+  text-align: right;
+}
+
+.book-nav-title {
+  color: #422b1b;
+  font-size: 1rem;
+  font-style: italic;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.book-nav a:hover,
+.book-nav a:focus-visible {
+  color: #422b1b;
+  text-decoration: underline;
 }
 
 @media (max-width: 480px) {
@@ -177,3 +209,66 @@ cite {
     text-align: left;
   }
 }
+
+.toc {
+  max-width: 42rem;
+  margin: 0 auto;
+  font-size: clamp(1.04rem, 2vw, 1.16rem);
+}
+
+.toc-session + .toc-session {
+  margin-top: 2rem;
+}
+
+.toc-session-title {
+  margin: 0 0 0.6rem;
+  font-weight: normal;
+  font-variant: small-caps;
+}
+
+.toc ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.toc-entry {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+.toc-entry:hover .toc-title,
+.toc-session-title a:hover {
+  text-decoration: underline;
+}
+
+.toc-leader {
+  flex: 1;
+  border-bottom: 1px dotted currentColor;
+  opacity: 0.5;
+}
+
+.toc-page {
+  font-variant-numeric: tabular-nums;
+}
+
+
+.title-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.title-link:hover,
+.title-link:focus-visible {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.12em;
+}
+

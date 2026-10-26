@@ -1,0 +1,70 @@
+---
+import { render } from "astro:content";
+import BookLayout from "../layouts/BookLayout.astro";
+import {
+  getSessionNumbers,
+  getSessionTexts,
+  sessionUrl,
+  textAnchor,
+} from "../lib/sessions";
+
+interface Props {
+  session: number;
+}
+
+const { session } = Astro.props;
+const texts = await getSessionTexts(session);
+const rendered = await Promise.all(
+  texts.map(async (text) => ({ text, ...(await render(text)) })),
+);
+
+// Sessions are sorted from newest to oldest.
+const sessions = await getSessionNumbers();
+const index = sessions.indexOf(session);
+const newer = index > 0 ? sessions[index - 1] : undefined;
+const older = index < sessions.length - 1 ? sessions[index + 1] : undefined;
+
+async function firstTitle(target: number | undefined) {
+  if (target === undefined) return undefined;
+  const [first] = await getSessionTexts(target);
+  return first?.data.title;
+}
+const newerTitle = await firstTitle(newer);
+const olderTitle = await firstTitle(older);
+---
+<BookLayout
+  title={`Contes et légendes de la Côte des épées, Vol XI · Chapitre ${session}`}
+  eyebrow={`Chroniques de la Côte des épées · Chapitre ${session}`}
+>
+  {
+    rendered.map(({ text, Content }) => (
+      <article class="chapter" id={textAnchor(text.id)}>
+        <h2 class="chapter-label">{text.data.title}</h2>
+        <div class="chapter-body">
+          <Content />
+        </div>
+      </article>
+    ))
+  }
+
+  <nav class="book-nav" aria-label="Navigation entre les sessions">
+    {
+      older !== undefined ? (
+        <a href={sessionUrl(older)} rel="prev">
+          {olderTitle && <span class="book-nav-title">← {olderTitle}</span>}
+        </a>
+      ) : (
+        <span />
+      )
+    }
+    {
+      newer !== undefined ? (
+        <a href={sessionUrl(newer)} rel="next">
+          {newerTitle && <span class="book-nav-title">{newerTitle} →</span>}
+        </a>
+      ) : (
+        <span />
+      )
+    }
+  </nav>
+</BookLayout>

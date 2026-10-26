@@ -1,86 +1,53 @@
 ---
-import "../styles/book.css";
+import BookLayout from "../layouts/BookLayout.astro";
+import {
+  getSessionNumbers,
+  getSessionTexts,
+  sessionUrl,
+  textUrl,
+} from "../lib/sessions";
+
+// Book order: oldest session first. Page numbers are estimated from word count
+// and run continuously across sessions.
+const WORDS_PER_PAGE = 300;
+const sessionNumbers = (await getSessionNumbers()).reverse();
+let page = 1;
+const sections = [];
+for (const session of sessionNumbers) {
+  const texts = (await getSessionTexts(session)).map((text) => {
+    const start = page;
+    const words = (text.body ?? "").split(/\s+/).filter(Boolean).length;
+    page += Math.max(1, Math.ceil(words / WORDS_PER_PAGE));
+    return { text, page: start };
+  });
+  sections.push({ session, texts });
+}
 ---
-<html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Contes et légendes de la Côte des épées vol. XI</title>
-    <meta
-      name="description"
-      content="Chroniques et souvenirs d'une aventure sur la Côte des Épées."
-    />
-  </head>
-  <body>
-    <main class="book-page">
-      <svg
-        class="paper-stains"
-        viewBox="0 0 800 1000"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <defs>
-          <filter id="aging" filterUnits="userSpaceOnUse" x="0" y="0" width="800" height="1000">
-            <feTurbulence type="fractalNoise" baseFrequency="0.006 0.01" numOctaves="5" seed="2" />
-            <feColorMatrix values="0 0 0 0 0.45 0 0 0 0 0.3 0 0 0 0 0.12 0 0 0 1.3 -0.5" />
-          </filter>
-          <filter id="ring" filterUnits="userSpaceOnUse" x="0" y="0" width="800" height="1000">
-            <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="4" seed="4" result="n" />
-            <feDisplacementMap in="SourceGraphic" in2="n" scale="26" />
-            <feGaussianBlur stdDeviation="1.1" />
-          </filter>
-          <filter id="blood" filterUnits="userSpaceOnUse" x="0" y="0" width="800" height="1000">
-            <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="3" seed="9" result="n" />
-            <feDisplacementMap in="SourceGraphic" in2="n" scale="10" />
-            <feGaussianBlur stdDeviation="0.6" />
-          </filter>
-        </defs>
-        <rect width="800" height="1000" filter="url(#aging)" opacity="0.55" />
-        <g filter="url(#ring)">
-          <circle cx="650" cy="210" r="88" fill="#8b5a2b" fill-opacity="0.1" stroke="#6f4520" stroke-width="7" stroke-opacity="0.32" />
-          <circle cx="170" cy="800" r="56" fill="#8b5a2b" fill-opacity="0.08" stroke="#6f4520" stroke-width="5" stroke-opacity="0.26" />
-          <circle cx="215" cy="770" r="40" fill="none" stroke="#6f4520" stroke-width="3" stroke-opacity="0.16" />
-        </g>
-        <g filter="url(#blood)" fill="#700f0f" fill-opacity="0.5">
-          <circle cx="690" cy="720" r="17" />
-          <circle cx="722" cy="758" r="7" />
-          <circle cx="668" cy="765" r="4" />
-          <circle cx="735" cy="690" r="3" />
-          <ellipse cx="705" cy="800" rx="3" ry="9" />
-        </g>
-      </svg>
-      <header class="book-header">
-        <p class="eyebrow">Chroniques des Royaumes oubliés · Tome XI</p>
-        <h1>Contes et légendes de la Côte des épées</h1>
-        <div class="ornament" aria-hidden="true">✦</div>
-      </header>
-
-      <article class="chapter">
-        <p class="chapter-label">Chapitre premier · Le chemin s'éveille</p>
-        <p class="opening">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. À l'ombre
-          des pins anciens, la route serpente entre les collines et disparaît
-          sous un voile de brume. Nul ne sait quelles merveilles — ou quels
-          périls — attendent au prochain tournant.
-        </p>
-        <p>
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-          accusantium doloremque laudantium. Le vent porte le cri des mouettes
-          depuis la côte, tandis qu'au loin les lanternes d'une auberge
-          promettent un feu, un repas chaud et peut-être quelques nouvelles.
-        </p>
-        <blockquote>
-          <p>« Toute légende commence par un pas dans l'inconnu. »</p>
-          <cite>— Un vieux voyageur</cite>
-        </blockquote>
-        <p>
-          Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut
-          fugit. Alors, compagnons, rassemblez vos affaires et gardez vos lames
-          à portée de main : notre histoire ne fait que commencer.
-        </p>
-      </article>
-
-      <footer class="book-footer">Fin du premier feuillet</footer>
-    </main>
-  </body>
-</html>
+<BookLayout
+  home
+  title="Contes et légendes de la Côte des épées · Sommaire"
+  eyebrow="Chroniques des Royaumes oubliés · Sommaire"
+>
+  <nav class="toc" aria-label="Sommaire">
+    {
+      sections.map(({ session, texts }) => (
+        <section class="toc-session">
+          <h2 class="toc-session-title">
+            <a href={sessionUrl(session)}>Chapitre {session}</a>
+          </h2>
+          <ul>
+            {texts.map(({ text, page }) => (
+              <li>
+                <a class="toc-entry" href={textUrl(session, text.id)}>
+                  <span class="toc-title">{text.data.title}</span>
+                  <span class="toc-leader" aria-hidden="true" />
+                  <span class="toc-page">{page}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </nav>
+</BookLayout>

@@ -1,53 +1,34 @@
 ---
 import BookLayout from "../layouts/BookLayout.astro";
-import {
-  getSessionNumbers,
-  getSessionTexts,
-  sessionUrl,
-  textUrl,
-} from "../lib/sessions";
-
-// Book order: oldest session first. Page numbers are estimated from word count
-// and run continuously across sessions.
-const WORDS_PER_PAGE = 300;
-const sessionNumbers = (await getSessionNumbers()).reverse();
-let page = 1;
-const sections = [];
-for (const session of sessionNumbers) {
-  const texts = (await getSessionTexts(session)).map((text) => {
-    const start = page;
-    const words = (text.body ?? "").split(/\s+/).filter(Boolean).length;
-    page += Math.max(1, Math.ceil(words / WORDS_PER_PAGE));
-    return { text, page: start };
-  });
-  sections.push({ session, texts });
-}
+import DeskInk from "../components/DeskInk.astro";
+import { pageUrl } from "../lib/sessions";
 ---
 <BookLayout
-  home
-  title="Contes et légendes de la Côte des épées · Sommaire"
-  eyebrow="Chroniques des Royaumes oubliés · Sommaire"
+  desk
+  title="Contes et légendes de la Côte des épées"
 >
-  <nav class="toc" aria-label="Sommaire">
-    {
-      sections.map(({ session, texts }) => (
-        <section class="toc-session">
-          <h2 class="toc-session-title">
-            <a href={sessionUrl(session)}>Chapitre {session}</a>
-          </h2>
-          <ul>
-            {texts.map(({ text, page }) => (
-              <li>
-                <a class="toc-entry" href={textUrl(session, text.id)}>
-                  <span class="toc-title">{text.data.title}</span>
-                  <span class="toc-leader" aria-hidden="true" />
-                  <span class="toc-page">{page}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))
-    }
-  </nav>
+  <h1 class="sr-only">Contes et légendes de la Côte des épées</h1>
+  <div class="desk">
+    <a class="tome" href={pageUrl("sommaire")}>
+      <span class="tome-band" aria-hidden="true"></span>
+      <span class="tome-title">Contes et légendes de la Côte des Épées</span>
+      <span class="tome-ornament" aria-hidden="true">✦</span>
+      <span class="tome-volume">Vol. XI</span>
+      <span class="tome-band tome-band-low" aria-hidden="true"></span>
+    </a>
+
+    <a class="folder" href={pageUrl("extraits")}>
+      <span class="folder-papers" aria-hidden="true">
+        <span class="sheet sheet-1"></span>
+        <span class="sheet sheet-2"></span>
+        <span class="sheet sheet-3"></span>
+      </span>
+      <span class="folder-cover">
+        <span class="folder-strap" aria-hidden="true"></span>
+        <span class="folder-note">Extraits</span>
+      </span>
+    </a>
+
+    <DeskInk />
+  </div>
 </BookLayout>

@@ -1,0 +1,52 @@
+---
+import BookLayout from "../layouts/BookLayout.astro";
+import {
+  getSessionNumbers,
+  getSessionTexts,
+  sessionUrl,
+  textUrl,
+} from "../lib/sessions";
+
+// Book order: oldest session first. Page numbers are estimated from word count
+// and run continuously across sessions.
+const WORDS_PER_PAGE = 300;
+const sessionNumbers = (await getSessionNumbers()).reverse();
+let page = 1;
+const sections = [];
+for (const session of sessionNumbers) {
+  const texts = (await getSessionTexts(session)).map((text) => {
+    const start = page;
+    const words = (text.body ?? "").split(/\s+/).filter(Boolean).length;
+    page += Math.max(1, Math.ceil(words / WORDS_PER_PAGE));
+    return { text, page: start };
+  });
+  sections.push({ session, texts });
+}
+---
+<BookLayout
+  title="Contes et légendes de la Côte des épées · Sommaire"
+  eyebrow="Chroniques des Royaumes oubliés · Sommaire"
+>
+  <nav class="toc" aria-label="Sommaire">
+    {
+      sections.map(({ session, texts }) => (
+        <section class="toc-session">
+          <h2 class="toc-session-title">
+            <a href={sessionUrl(session)}>Chapitre {session}</a>
+          </h2>
+          <ul>
+            {texts.map(({ text, page }) => (
+              <li>
+                <a class="toc-entry" href={textUrl(session, text.id)}>
+                  <span class="toc-title">{text.data.title}</span>
+                  <span class="toc-leader" aria-hidden="true" />
+                  <span class="toc-page">{page}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </nav>
+</BookLayout>

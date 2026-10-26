@@ -22,7 +22,14 @@ export function textUrl(session: number, id: string): string {
   return `${sessionUrl(session)}#${textAnchor(id)}`;
 }
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+export const homeUrl = `${base}/`;
+
+export function pageUrl(path: string): string {
+  return `${base}/${path}/`;
+}
+
 export function sessionUrl(session: number): string {
-  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-  return `${base}/session/${session}/`;
+  return pageUrl(`session/${session}`);
 }

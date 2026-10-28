@@ -27,14 +27,31 @@ for (const entry of entries) {
   eyebrow="Lore"
 >
   <section class="lore-index" id="lore-index">
-    <input
-      class="lore-search"
-      id="lore-search"
-      type="search"
-      placeholder="Rechercher…"
-      aria-label="Rechercher dans le lore"
-      autocomplete="off"
-    />
+    <div class="lore-search-field">
+      <svg class="lore-search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="10" cy="10" r="6.5" />
+        <path d="M15 15l6 6" />
+      </svg>
+      <input
+        class="lore-search"
+        id="lore-search"
+        type="search"
+        placeholder="Rechercher…"
+        aria-label="Rechercher dans le lore"
+        autocomplete="off"
+      />
+      <button
+        class="lore-search-clear"
+        id="lore-search-clear"
+        type="button"
+        aria-label="Effacer la recherche"
+        hidden
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+    </div>
 
     {
       [...groups].map(([letter, items]) => (
@@ -70,6 +87,7 @@ for (const entry of entries) {
 <script>
   const index = document.querySelector<HTMLElement>("#lore-index");
   const search = document.querySelector<HTMLInputElement>("#lore-search");
+  const clear = document.querySelector<HTMLButtonElement>("#lore-search-clear");
   const empty = document.querySelector<HTMLElement>("#lore-empty");
   const articles = document.querySelectorAll<HTMLElement>(".lore-article");
   const groups = document.querySelectorAll<HTMLElement>("[data-group]");
@@ -153,6 +171,7 @@ for (const entry of entries) {
   });
 
   function filter() {
+    if (clear) clear.hidden = !search?.value;
     const query = normalize(search?.value.trim() ?? "");
     for (const { item, link, excerpt, title, body } of items) {
       const inTitle = query ? find(title, query) : null;
@@ -179,5 +198,21 @@ for (const entry of entries) {
 
   window.addEventListener("hashchange", showFromHash);
   search?.addEventListener("input", filter);
+
+  function clearSearch() {
+    if (!search) return;
+    search.value = "";
+    filter();
+    search.focus();
+  }
+
+  clear?.addEventListener("click", clearSearch);
+  // Escape clears in every browser, not only those with a native search field.
+  search?.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && search.value) {
+      event.preventDefault();
+      clearSearch();
+    }
+  });
   showFromHash();
 </script>

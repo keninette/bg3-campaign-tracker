@@ -1,0 +1,74 @@
+.toc {
+  max-width: 42rem;
+  margin: 0 auto;
+  font-size: clamp(1.04rem, 2vw, 1.16rem);
+}
+
+.toc-session + .toc-session {
+  margin-top: 2rem;
+}
+
+.toc-session-title {
+  margin: 0 0 0.6rem;
+  font-weight: normal;
+  font-variant: small-caps;
+}
+
+.toc ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.toc-entry {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.toc-leader {
+  flex: 1;
+  border-bottom: 1px dotted currentColor;
+  opacity: 0.5;
+}
+
+.toc-page {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Floating to-bottom / to-top button, aligned on the paper's right edge */
+.scroll-jump {
+  position: fixed;
+  bottom: 1.5rem;
+  right: max(1.25rem, calc((100vw - 50rem) / 2 + 1.5rem));
+  z-index: 2;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 1px solid #8b6a3e;
+  border-radius: 50%;
+  background: #f0e3c3;
+  color: #5b3a1a;
+  font-size: 1.3rem;
+  line-height: 1;
+  box-shadow: 0 0.2rem 0.6rem #2a1b0e66;
+  cursor: pointer;
+}
+
+.scroll-jump[hidden] {
+  display: none;
+}
+
+.scroll-jump:hover,
+.scroll-jump:focus-visible {
+  background: #fff6dc;
+}

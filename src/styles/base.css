@@ -1,0 +1,22 @@
+/* Shared by every page: change the wallpaper here only. */
+:root {
+  --wallpaper: url("../assets/img/wallpapers/act1.jpg");
+  --wallpaper-shade: #00000059;
+  color-scheme: light;
+  font-family: Georgia, "Times New Roman", serif;
+  color: #382719;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    linear-gradient(var(--wallpaper-shade), var(--wallpaper-shade)),
+    #000 var(--wallpaper) center / cover no-repeat;
+}

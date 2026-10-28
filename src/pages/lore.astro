@@ -1,0 +1,110 @@
+---
+import { getCollection, render } from "astro:content";
+import BookLayout from "../layouts/BookLayout.astro";
+import "../styles/lore.css";
+
+// Lowercase and strip accents so "é" matches "e" in search and grouping.
+function normalize(text: string): string {
+  return text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+}
+
+const entries = (await getCollection("lore")).sort((a, b) =>
+  a.data.title.localeCompare(b.data.title, "fr", { sensitivity: "base" }),
+);
+
+const rendered = await Promise.all(
+  entries.map(async (entry) => ({ entry, ...(await render(entry)) })),
+);
+
+const groups = new Map<string, typeof entries>();
+for (const entry of entries) {
+  const letter = normalize(entry.data.title).charAt(0).toUpperCase();
+  groups.set(letter, [...(groups.get(letter) ?? []), entry]);
+}
+---
+<BookLayout
+  title="Contes et légendes de la Côte des épées · Lore"
+  eyebrow="Lore"
+>
+  <section class="lore-index" id="lore-index">
+    <input
+      class="lore-search"
+      id="lore-search"
+      type="search"
+      placeholder="Rechercher…"
+      aria-label="Rechercher dans le lore"
+      autocomplete="off"
+    />
+
+    {
+      [...groups].map(([letter, items]) => (
+        <section class="lore-group" data-group>
+          <h2 class="lore-letter">{letter}</h2>
+          <ul>
+            {items.map((entry) => (
+              <li data-search={normalize(`${entry.data.title} ${entry.body ?? ""}`)}>
+                <a href={`#${entry.id}`}>{entry.data.title}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+
+    <p class="lore-empty" id="lore-empty" hidden>Aucun résultat.</p>
+  </section>
+
+  {
+    rendered.map(({ entry, Content }) => (
+      <article class="chapter lore-article" id={entry.id} hidden>
+        <h2 class="chapter-label">{entry.data.title}</h2>
+        <div class="chapter-body">
+          <Content />
+        </div>
+        <a class="lore-back" href="#">← Retour à l'index</a>
+      </article>
+    ))
+  }
+</BookLayout>
+<script>
+  const index = document.querySelector<HTMLElement>("#lore-index");
+  const search = document.querySelector<HTMLInputElement>("#lore-search");
+  const empty = document.querySelector<HTMLElement>("#lore-empty");
+  const articles = document.querySelectorAll<HTMLElement>(".lore-article");
+  const groups = document.querySelectorAll<HTMLElement>("[data-group]");
+
+  function normalize(text: string): string {
+    return text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  }
+
+  // The hash selects the open entry; no hash shows the index.
+  function showFromHash() {
+    const id = decodeURIComponent(location.hash.slice(1));
+    let found = false;
+    articles.forEach((article) => {
+      article.hidden = article.id !== id;
+      if (!article.hidden) found = true;
+    });
+    if (index) index.hidden = found;
+    document.querySelector(".book-page")?.scrollTo({ top: 0 });
+  }
+
+  function filter() {
+    const query = normalize(search?.value.trim() ?? "");
+    let visible = 0;
+    groups.forEach((group) => {
+      let groupVisible = 0;
+      group.querySelectorAll<HTMLElement>("[data-search]").forEach((item) => {
+        item.hidden = !item.dataset.search?.includes(query);
+        if (!item.hidden) groupVisible++;
+      });
+      group.hidden = groupVisible === 0;
+      visible += groupVisible;
+    });
+    if (empty) empty.hidden = visible > 0;
+  }
+
+  window.addEventListener("hashchange", showFromHash);
+  search?.addEventListener("input", filter);
+  showFromHash();
+</script>

@@ -79,3 +79,17 @@
 [hidden] {
   display: none !important;
 }
+
+.lore-snippet {
+  margin: 0.15rem 0 0.4rem 1rem;
+  color: #67492d;
+  font-size: 0.85em;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.lore-index mark {
+  padding: 0 0.1em;
+  background: #d9b46a80;
+  color: inherit;
+}

@@ -5,7 +5,7 @@ import "../styles/lore.css";
 
 // Lowercase and strip accents so "é" matches "e" in search and grouping.
 function normalize(text: string): string {
-  return text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  return text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
 }
 
 const entries = (await getCollection("lore")).sort((a, b) =>
@@ -42,8 +42,9 @@ for (const entry of entries) {
           <h2 class="lore-letter">{letter}</h2>
           <ul>
             {items.map((entry) => (
-              <li data-search={normalize(`${entry.data.title} ${entry.body ?? ""}`)}>
+              <li data-entry={entry.id}>
                 <a href={`#${entry.id}`}>{entry.data.title}</a>
+                <p class="lore-snippet" hidden />
               </li>
             ))}
           </ul>
@@ -74,7 +75,7 @@ for (const entry of entries) {
   const groups = document.querySelectorAll<HTMLElement>("[data-group]");
 
   function normalize(text: string): string {
-    return text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+    return text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
   }
 
   // The hash selects the open entry; no hash shows the index.
@@ -89,15 +90,87 @@ for (const entry of entries) {
     document.querySelector(".book-page")?.scrollTo({ top: 0 });
   }
 
+  // Folded text keeps, for each folded character, its index in the original,
+  // so a match found in folded text can be highlighted in the original.
+  interface Folded {
+    text: string;
+    folded: string;
+    map: number[];
+  }
+
+  function fold(text: string): Folded {
+    let folded = "";
+    const map: number[] = [];
+    for (let i = 0; i < text.length; i++) {
+      for (const char of normalize(text[i])) {
+        folded += char;
+        map.push(i);
+      }
+    }
+    return { text, folded, map };
+  }
+
+  function find({ folded, map }: Folded, query: string): [number, number] | null {
+    const at = folded.indexOf(query);
+    if (at === -1) return null;
+    return [map[at], map[at + query.length - 1] + 1];
+  }
+
+  function mark(text: string): HTMLElement {
+    const element = document.createElement("mark");
+    element.textContent = text;
+    return element;
+  }
+
+  // Shows the match with some context, cut on word boundaries.
+  const CONTEXT = 60;
+  function snippet(text: string, [start, end]: [number, number]): (string | Node)[] {
+    let from = Math.max(0, start - CONTEXT);
+    let to = Math.min(text.length, end + CONTEXT);
+    const space = text.indexOf(" ", from);
+    if (from > 0 && space !== -1 && space < start) from = space + 1;
+    const lastSpace = text.lastIndexOf(" ", to);
+    if (to < text.length && lastSpace > end) to = lastSpace;
+    return [
+      from > 0 ? "…" : "",
+      text.slice(from, start),
+      mark(text.slice(start, end)),
+      text.slice(end, to),
+      to < text.length ? "…" : "",
+    ];
+  }
+
+  const items = [...document.querySelectorAll<HTMLElement>("[data-entry]")].map((item) => {
+    const body = document.getElementById(item.dataset.entry ?? "")?.querySelector(".chapter-body");
+    const link = item.querySelector("a")!;
+    return {
+      item,
+      link,
+      excerpt: item.querySelector<HTMLElement>(".lore-snippet")!,
+      title: fold(link.textContent ?? ""),
+      body: fold((body?.textContent ?? "").replace(/\s+/g, " ").trim()),
+    };
+  });
+
   function filter() {
     const query = normalize(search?.value.trim() ?? "");
+    for (const { item, link, excerpt, title, body } of items) {
+      const inTitle = query ? find(title, query) : null;
+      const inBody = query && !inTitle ? find(body, query) : null;
+      item.hidden = Boolean(query) && !inTitle && !inBody;
+
+      link.replaceChildren(
+        ...(inTitle
+          ? [title.text.slice(0, inTitle[0]), mark(title.text.slice(...inTitle)), title.text.slice(inTitle[1])]
+          : [title.text]),
+      );
+      excerpt.hidden = !inBody;
+      excerpt.replaceChildren(...(inBody ? snippet(body.text, inBody) : []));
+    }
+
     let visible = 0;
     groups.forEach((group) => {
-      let groupVisible = 0;
-      group.querySelectorAll<HTMLElement>("[data-search]").forEach((item) => {
-        item.hidden = !item.dataset.search?.includes(query);
-        if (!item.hidden) groupVisible++;
-      });
+      const groupVisible = group.querySelectorAll("[data-entry]:not([hidden])").length;
       group.hidden = groupVisible === 0;
       visible += groupVisible;
     });

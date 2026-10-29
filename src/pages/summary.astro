@@ -1,10 +1,10 @@
 ---
 import BookLayout from "../layouts/BookLayout.astro";
-import ScrollJump from "../components/ScrollJump.astro";
 import "../styles/summary.css";
 import {
   getSessionNumbers,
   getSessionTexts,
+  homeUrl,
   sessionUrl,
   textUrl,
 } from "../lib/sessions";
@@ -51,5 +51,10 @@ for (const session of sessionNumbers) {
       ))
     }
   </nav>
-  <ScrollJump />
+
+  <nav class="book-nav" aria-label="Navigation">
+    <a href={homeUrl} rel="prev">
+      <span class="book-nav-title">← Retour à l'accueil</span>
+    </a>
+  </nav>
 </BookLayout>

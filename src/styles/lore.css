@@ -1,0 +1,162 @@
+.lore-index {
+  position: relative;
+  z-index: 1;
+  max-width: 42rem;
+  margin: 0 auto;
+  font-size: clamp(1.04rem, 2vw, 1.16rem);
+}
+
+.lore-search-field {
+  position: relative;
+  margin: 0 0 2rem;
+  color: #987342;
+  transition: color 0.2s;
+}
+
+.lore-search-field:focus-within {
+  color: #79552f;
+}
+
+.lore-search-field svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.8;
+}
+
+.lore-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.2rem;
+  width: 1.1em;
+  height: 1.1em;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.lore-search {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 2.2rem;
+  border: 0;
+  border-bottom: 1px solid #98734280;
+  border-radius: 0;
+  background: transparent;
+  color: #382719;
+  font: inherit;
+  font-style: italic;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+}
+
+.lore-search:focus {
+  outline: none;
+  border-bottom-color: #79552f;
+  box-shadow: 0 1px 0 #79552f;
+}
+
+/* Replaced by .lore-search-clear */
+.lore-search::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.lore-search-clear {
+  position: absolute;
+  top: 50%;
+  right: 0.1rem;
+  display: grid;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.lore-search-clear svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.lore-search-clear:hover,
+.lore-search-clear:focus-visible {
+  border-color: #98734280;
+  background: #98734226;
+  color: #422b1b;
+  outline: none;
+}
+
+.lore-search::placeholder {
+  color: #79552f;
+  opacity: 0.7;
+}
+
+.lore-group + .lore-group {
+  margin-top: 1.6rem;
+}
+
+.lore-letter {
+  margin: 0 0 0.4rem;
+  color: #764726;
+  font-size: 1.6rem;
+  font-weight: normal;
+  border-bottom: 1px solid #98734240;
+}
+
+.lore-index ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lore-index li {
+  padding: 0.2rem 0;
+}
+
+.lore-index a,
+.lore-back {
+  color: inherit;
+  text-decoration: none;
+}
+
+.lore-index a:hover,
+.lore-index a:focus-visible,
+.lore-back:hover,
+.lore-back:focus-visible {
+  text-decoration: underline;
+}
+
+.lore-empty {
+  font-style: italic;
+  text-align: center;
+}
+
+.lore-back {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #79552f;
+  font-size: 0.9rem;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.lore-snippet {
+  margin: 0.15rem 0 0.4rem 1rem;
+  color: #67492d;
+  font-size: 0.85em;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.lore-index mark {
+  padding: 0 0.1em;
+  background: #d9b46a80;
+  color: inherit;
+}

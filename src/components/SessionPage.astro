@@ -6,7 +6,6 @@ import {
   getSessionNumbers,
   getSessionTexts,
   sessionUrl,
-  textAnchor,
 } from "../lib/sessions";
 
 interface Props {
@@ -34,12 +33,12 @@ const newerTitle = await firstTitle(newer);
 const olderTitle = await firstTitle(older);
 ---
 <BookLayout
-  title={`Contes et légendes de la Côte des épées, Vol XI · Chapitre ${session}`}
-  eyebrow={`Chroniques de la Côte des épées · Chapitre ${session}`}
+  title={`Contes et légendes de la Côte des Épées, Vol. XI · Chapitre ${session}`}
+  eyebrow={`Chroniques de la Côte des Épées · Chapitre ${session}`}
 >
   {
     rendered.map(({ text, Content }) => (
-      <article class="chapter" id={textAnchor(text.id)}>
+      <article class="chapter">
         <h2 class="chapter-label">{text.data.title}</h2>
         {text.data.picture && (
           <figure class="chapter-picture">

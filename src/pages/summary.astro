@@ -6,7 +6,6 @@ import {
   getSessionTexts,
   homeUrl,
   sessionUrl,
-  textUrl,
 } from "../lib/sessions";
 
 // Book order: oldest session first. Page numbers are estimated from word count
@@ -26,7 +25,7 @@ for (const session of sessionNumbers) {
 }
 ---
 <BookLayout
-  title="Contes et légendes de la Côte des épées · Sommaire"
+  title="Contes et légendes de la Côte des Épées, Vol. XI · Sommaire"
   eyebrow="Sommaire"
 >
   <nav class="toc" aria-label="Sommaire">
@@ -53,7 +52,7 @@ for (const session of sessionNumbers) {
   </nav>
 
   <nav class="book-nav" aria-label="Navigation">
-    <a href={homeUrl} rel="prev">
+    <a href={homeUrl}>
       <span class="book-nav-title">← Retour à l'accueil</span>
     </a>
   </nav>

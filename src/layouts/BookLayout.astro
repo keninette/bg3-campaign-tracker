@@ -7,30 +7,24 @@ import { homeUrl } from "../lib/sessions";
 interface Props {
   title: string;
   eyebrow?: string;
-  // Hides the book header (title, eyebrow, ornament).
-  bare?: boolean;
 }
 
-const { title, eyebrow, bare = false } = Astro.props;
+const { title, eyebrow } = Astro.props;
 ---
 <BaseLayout title={title}>
   <div class="book-scene">
     <main class="book-page">
       <div class="book-sheet">
         <PaperStains />
-        {
-          !bare && (
-            <header class="book-header">
-              {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-              <h1>
-                <a class="title-link" href={homeUrl} title="Retour à l'accueil">
-                  Contes et légendes de la Côte des épées
-                </a>
-              </h1>
-              <div class="ornament" aria-hidden="true">✦</div>
-            </header>
-          )
-        }
+        <header class="book-header">
+          {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+          <h1>
+            <a class="title-link" href={homeUrl} title="Retour à l'accueil">
+              Contes et légendes de la Côte des Épées
+            </a>
+          </h1>
+          <div class="ornament" aria-hidden="true">✦</div>
+        </header>
         <slot />
       </div>
     </main>

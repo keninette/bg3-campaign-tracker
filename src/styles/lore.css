@@ -118,8 +118,7 @@
   padding: 0.2rem 0;
 }
 
-.lore-index a,
-.lore-back {
+.lore-index a {
   color: inherit;
   text-decoration: none;
 }
@@ -141,6 +140,7 @@
   margin-top: 1rem;
   color: #79552f;
   font-size: 0.9rem;
+  text-decoration: none;
 }
 
 [hidden] {

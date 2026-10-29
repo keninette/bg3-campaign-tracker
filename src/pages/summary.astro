@@ -4,6 +4,7 @@ import "../styles/summary.css";
 import {
   getSessionNumbers,
   getSessionTexts,
+  homeUrl,
   sessionUrl,
   textUrl,
 } from "../lib/sessions";
@@ -49,5 +50,11 @@ for (const session of sessionNumbers) {
         </section>
       ))
     }
+  </nav>
+
+  <nav class="book-nav" aria-label="Navigation">
+    <a href={homeUrl} rel="prev">
+      <span class="book-nav-title">← Retour à l'accueil</span>
+    </a>
   </nav>
 </BookLayout>

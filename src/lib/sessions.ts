@@ -1,15 +1,15 @@
 import { getCollection } from "astro:content";
 
 export async function getSessionNumbers(): Promise<number[]> {
-  const texts = await getCollection("sessions");
-  return [...new Set(texts.map((text) => text.data.session))].sort(
+  const sessions = await getCollection("sessions");
+  return [...new Set(sessions.map((session) => session.data.session))].sort(
     (a, b) => b - a,
   );
 }
 
 export async function getSessionTexts(session: number) {
-  const texts = await getCollection("sessions");
-  return texts
+  const sessions = await getCollection("sessions");
+  return sessions
     .filter((text) => text.data.session === session)
     .sort((a, b) => a.data.order - b.data.order);
 }

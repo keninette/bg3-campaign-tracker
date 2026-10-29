@@ -2,6 +2,7 @@
 import { getCollection, render } from "astro:content";
 import BookLayout from "../layouts/BookLayout.astro";
 import "../styles/lore.css";
+import { homeUrl } from "../lib/sessions";
 
 // Lowercase and strip accents so "é" matches "e" in search and grouping.
 function normalize(text: string): string {
@@ -23,7 +24,7 @@ for (const entry of entries) {
 }
 ---
 <BookLayout
-  title="Contes et légendes de la Côte des épées · Lore"
+  title="Contes et légendes de la Côte des épées, Vol. XI · Lore"
   eyebrow="Lore"
 >
   <section class="lore-index" id="lore-index">
@@ -70,6 +71,12 @@ for (const entry of entries) {
     }
 
     <p class="lore-empty" id="lore-empty" hidden>Aucun résultat.</p>
+
+    <nav class="book-nav" aria-label="Navigation">
+      <a href={homeUrl} rel="prev">
+        <span class="book-nav-title">← Retour à l'accueil</span>
+      </a>
+    </nav>
   </section>
 
   {

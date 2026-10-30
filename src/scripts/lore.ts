@@ -6,6 +6,31 @@ const empty = document.querySelector<HTMLElement>("#lore-empty");
 const articles = document.querySelectorAll<HTMLElement>(".lore-article");
 const groups = document.querySelectorAll<HTMLElement>("[data-group]");
 
+// The page's own crumb, e.g. "Lore", becomes a link back to the index while an entry is open,
+// followed by the entry's title.
+const crumbs = document.querySelector(".breadcrumb ol");
+const pageCrumb = crumbs?.lastElementChild;
+const pageLabel = pageCrumb?.textContent ?? "";
+
+function crumb(label: string, href?: string): HTMLElement {
+  const element = document.createElement(href ? "a" : "span");
+  element.textContent = label;
+  if (href) element.setAttribute("href", href);
+  else element.setAttribute("aria-current", "page");
+  return element;
+}
+
+function updateBreadcrumb(open: HTMLElement | undefined) {
+  if (!crumbs || !pageCrumb) return;
+  while (pageCrumb.nextElementSibling) pageCrumb.nextElementSibling.remove();
+  pageCrumb.replaceChildren(open ? crumb(pageLabel, "#") : crumb(pageLabel));
+  if (open) {
+    const item = document.createElement("li");
+    item.append(crumb(open.querySelector(".chapter-label")?.textContent ?? open.id));
+    crumbs.append(item);
+  }
+}
+
 // The hash selects the open entry; no hash shows the index.
 function showFromHash() {
   let id = location.hash.slice(1);
@@ -13,12 +38,13 @@ function showFromHash() {
   try {
     id = decodeURIComponent(id);
   } catch {}
-  let found = false;
+  let open: HTMLElement | undefined;
   articles.forEach((article) => {
     article.hidden = article.id !== id;
-    if (!article.hidden) found = true;
+    if (!article.hidden) open = article;
   });
-  if (index) index.hidden = found;
+  if (index) index.hidden = Boolean(open);
+  updateBreadcrumb(open);
   document.querySelector(".book-page")?.scrollTo({ top: 0 });
 }
 

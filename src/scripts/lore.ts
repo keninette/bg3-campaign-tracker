@@ -1,3 +1,5 @@
+import { normalize } from "../lib/normalize";
+
 const index = document.querySelector<HTMLElement>("#lore-index");
 const search = document.querySelector<HTMLInputElement>("#lore-search");
 const clear = document.querySelector<HTMLButtonElement>("#lore-search-clear");
@@ -5,13 +7,13 @@ const empty = document.querySelector<HTMLElement>("#lore-empty");
 const articles = document.querySelectorAll<HTMLElement>(".lore-article");
 const groups = document.querySelectorAll<HTMLElement>("[data-group]");
 
-function normalize(text: string): string {
-  return text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
-}
-
 // The hash selects the open entry; no hash shows the index.
 function showFromHash() {
-  const id = decodeURIComponent(location.hash.slice(1));
+  let id = location.hash.slice(1);
+  // A malformed escape such as "#100%" is used as is rather than breaking navigation.
+  try {
+    id = decodeURIComponent(id);
+  } catch {}
   let found = false;
   articles.forEach((article) => {
     article.hidden = article.id !== id;

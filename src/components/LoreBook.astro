@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import RevealButton from "./RevealButton.astro";
 import "../styles/lore.css";
 import { homeUrl } from "../lib/sessions";
+import { normalize } from "../lib/normalize";
 
 interface Props {
   // Shows the entries not available to players yet, with a button to reveal them.
@@ -10,11 +11,6 @@ interface Props {
 }
 
 const { admin = false } = Astro.props;
-
-// Lowercase and strip accents so "é" matches "e" in search and grouping.
-function normalize(text: string): string {
-  return text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
-}
 
 const entries = (
   await getCollection("lore", (entry) => admin || entry.data.available)

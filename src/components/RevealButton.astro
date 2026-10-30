@@ -7,7 +7,7 @@ interface Props {
 
 const { path, available } = Astro.props;
 ---
-<reveal-button class="reveal" data-path={path} data-available={String(available)}>
+<reveal-button class="reveal" data-path={path}>
   <button type="button">{available ? "Masquer aux joueurs" : "Révéler aux joueurs"}</button>
   <span class="reveal-status" role="status"></span>
 </reveal-button>

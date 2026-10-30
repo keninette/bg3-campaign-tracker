@@ -1,10 +1,8 @@
 // Edits content files through the GitHub API, using a personal access token.
-// The token is never stored: it is kept in memory until the page is closed or reloaded.
+// The token is never kept: it is asked for on every change.
 const OWNER = "keninette";
 const REPO = `${OWNER}/bg3-campaign-tracker`;
 const BRANCH = "main";
-
-let token: string | null = null;
 
 // A password field rather than prompt(), so the token is masked and a password manager can fill it.
 function askToken(): Promise<string | null> {
@@ -32,15 +30,6 @@ function askToken(): Promise<string | null> {
   });
 }
 
-async function getToken(): Promise<string | null> {
-  token ??= await askToken();
-  return token;
-}
-
-function forgetToken() {
-  token = null;
-}
-
 // The API sends file contents as base64 of the UTF-8 bytes.
 function decode(base64: string): string {
   const bytes = Uint8Array.from(atob(base64.replace(/\s/g, "")), (char) => char.charCodeAt(0));
@@ -53,26 +42,32 @@ function encode(text: string): string {
   return btoa(binary);
 }
 
-// Sets `available` in the frontmatter, adding the field when it is missing.
-function withAvailable(markdown: string, available: boolean): string {
-  const frontmatter = markdown.match(/^---\r?\n[\s\S]*?\r?\n---/)?.[0];
+// Flips `available` in the frontmatter; a missing field counts as false, the schema default.
+// A leading byte order mark, as some Windows editors write, is kept as is.
+function toggled(markdown: string): { markdown: string; available: boolean } {
+  const bom = markdown.startsWith("﻿") ? "﻿" : "";
+  const text = markdown.slice(bom.length);
+  const frontmatter = text.match(/^---\r?\n(?:[\s\S]*?\r?\n)?---(?=\r?\n|$)/)?.[0];
   if (!frontmatter) throw new Error("En-tête du fichier introuvable.");
+
+  const field = /^available:[ \t]*(\S*).*$/m;
+  const available = frontmatter.match(field)?.[1] !== "true";
   const eol = frontmatter.includes("\r\n") ? "\r\n" : "\n";
-  const updated = /^available:.*$/m.test(frontmatter)
-    ? frontmatter.replace(/^available:.*$/m, `available: ${available}`)
-    : frontmatter.replace(/\r?\n---$/, `${eol}available: ${available}${eol}---`);
-  return updated + markdown.slice(frontmatter.length);
+  const updated = field.test(frontmatter)
+    ? frontmatter.replace(field, `available: ${available}`)
+    : `${frontmatter.slice(0, -3)}available: ${available}${eol}---`;
+  return { markdown: bom + updated + text.slice(frontmatter.length), available };
 }
 
 async function failure(response: Response): Promise<Error> {
-  // A rejected token is forgotten so the next click asks for a new one.
-  if (response.status === 401) forgetToken();
   const { message } = await response.json().catch(() => ({}));
   return new Error(`Erreur GitHub ${response.status}${message ? ` : ${message}` : ""}`);
 }
 
-export async function setAvailable(path: string, available: boolean): Promise<void> {
-  const token = await getToken();
+// Flips the entry from the file's current state on GitHub, not the state the page was built with,
+// which may be out of date until the redeploy finishes. Returns the new state.
+export async function toggleAvailable(path: string): Promise<boolean> {
+  const token = await askToken();
   if (!token) throw new Error("Aucun jeton GitHub.");
 
   const url = `https://api.github.com/repos/${REPO}/contents/${path
@@ -88,9 +83,7 @@ export async function setAvailable(path: string, available: boolean): Promise<vo
   if (!current.ok) throw await failure(current);
   const { content, sha } = await current.json();
 
-  const markdown = decode(content);
-  const updated = withAvailable(markdown, available);
-  if (updated === markdown) return;
+  const { markdown: updated, available } = toggled(decode(content));
 
   const response = await fetch(url, {
     method: "PUT",
@@ -103,4 +96,5 @@ export async function setAvailable(path: string, available: boolean): Promise<vo
     }),
   });
   if (!response.ok) throw await failure(response);
+  return available;
 }

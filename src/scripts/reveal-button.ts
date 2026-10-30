@@ -1,18 +1,16 @@
-import { setAvailable } from "./github";
+import { toggleAvailable } from "./github";
 
 // Commits the entry's `available` flag; the deploy workflow publishes it about a minute later.
 class RevealButton extends HTMLElement {
   connectedCallback() {
     const button = this.querySelector("button")!;
     const status = this.querySelector<HTMLElement>(".reveal-status")!;
-    let available = this.dataset.available === "true";
 
     button.addEventListener("click", async () => {
       button.disabled = true;
       status.textContent = "Envoi…";
       try {
-        await setAvailable(this.dataset.path!, !available);
-        available = !available;
+        const available = await toggleAvailable(this.dataset.path!);
         // Keep the index entry's icon in step with the new state.
         const article = this.closest<HTMLElement>(".lore-article");
         document

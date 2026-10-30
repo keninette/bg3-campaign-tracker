@@ -1,5 +1,5 @@
 ---
-import { getCollection, render } from "astro:content";
+import { getCollection } from "astro:content";
 import RevealButton from "./RevealButton.astro";
 import SearchBar from "./SearchBar.astro";
 import "@fortawesome/fontawesome-free/css/fontawesome.min.css";
@@ -21,9 +21,21 @@ const entries = (
   a.data.title.localeCompare(b.data.title, "fr", { sensitivity: "base" }),
 );
 
-const rendered = await Promise.all(
-  entries.map(async (entry) => ({ entry, ...(await render(entry)) })),
-);
+// Marks the first paragraph of the text itself for the drop cap, skipping the notes before it:
+// the italic description and remarks in brackets, e.g. "[Les pages sont tachées…]".
+function markLead(html: string): string {
+  let found = false;
+  return html.replace(/<p>([\s\S]*?)<\/p>/g, (paragraph, inner: string) => {
+    if (found) return paragraph;
+    const text = inner.replace(/<[^>]+>/g, "").trim();
+    const isNote = /^<em>[\s\S]*<\/em>$/.test(inner.trim()) || /^\[[\s\S]*\]$/.test(text);
+    if (isNote) return paragraph;
+    found = true;
+    return `<p class="lead">${inner}</p>`;
+  });
+}
+
+const rendered = entries.map((entry) => ({ entry, html: markLead(entry.rendered?.html ?? "") }));
 
 const groups = new Map<string, typeof entries>();
 for (const entry of entries) {
@@ -66,13 +78,11 @@ for (const entry of entries) {
 </section>
 
 {
-  rendered.map(({ entry, Content }) => (
+  rendered.map(({ entry, html }) => (
     <article class="chapter lore-article" id={entry.id} hidden>
       <h2 class="chapter-label">{entry.data.title}</h2>
       {admin && <RevealButton path={entry.filePath!} available={entry.data.available} />}
-      <div class="chapter-body">
-        <Content />
-      </div>
+      <div class="chapter-body" set:html={html} />
       <a class="lore-back" href="#">← Retour à l'index</a>
     </article>
   ))

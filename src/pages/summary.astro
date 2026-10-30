@@ -29,6 +29,10 @@ for (const session of sessionNumbers) {
   eyebrow="Sommaire"
   breadcrumb={[{ label: "Sommaire" }]}
 >
+  <p class="summary-intro">
+    Ce vieux livre en cuir est la première édition du livre à succès qui relate les aventures d'un groupe de héros dans leur voyage pour se débarrasser de la larve Illithid qui les infectait. Il est composé des originaux collectés par un inconnu, probablement leur contemporain, durant tout leur voyage.
+    Les pages sont reliées maladroitement avec de fines lanières en cuir, elles sont jaunies, presque brunies par le temps.
+  </p>
   <nav class="toc" aria-label="Sommaire">
     {
       sections.map(({ session, texts }) => (

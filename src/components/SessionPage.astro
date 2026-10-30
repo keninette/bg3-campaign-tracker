@@ -42,7 +42,10 @@ const olderTitle = await firstTitle(older);
     rendered.map(({ text, Content }) => (
       <article class="chapter">
         <h2 class="chapter-label">{text.data.title}</h2>
-        {text.data.picture && (
+        <div class="chapter-body">
+          <Content />
+        </div>
+         {text.data.picture && (
           <figure class="chapter-picture">
             <button type="button" data-enlarge aria-label={`Agrandir l'image : ${text.data.title}`}>
               <Image
@@ -54,9 +57,6 @@ const olderTitle = await firstTitle(older);
             </button>
           </figure>
         )}
-        <div class="chapter-body">
-          <Content />
-        </div>
       </article>
     ))
   }

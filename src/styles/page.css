@@ -129,7 +129,14 @@ h2.chapter-label {
   hyphens: auto;
 }
 
-.chapter-body > p:first-child::first-letter {
+/* Keep single line breaks from the Markdown files, e.g. between verses */
+.chapter-body p {
+  white-space: pre-line;
+}
+
+/* Story pages open on their first paragraph; lore marks the first one after its notes */
+.chapter:not(.lore-article) .chapter-body > p:first-child::first-letter,
+.chapter-body > p.lead::first-letter {
   float: left;
   margin: 0.1rem 0.55rem 0 0;
   color: #764726;
@@ -288,7 +295,8 @@ blockquote p:last-child:not(:first-child) {
     text-align: left;
   }
 
-  .chapter-body > p:first-child::first-letter {
+  .chapter:not(.lore-article) .chapter-body > p:first-child::first-letter,
+  .chapter-body > p.lead::first-letter {
     font-size: 3.2rem;
   }
 

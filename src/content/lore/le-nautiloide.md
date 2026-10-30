@@ -1,5 +1,6 @@
 ---
 title: Le Nautiloïde
+available: true
 ---
 Vaisseau organique des illithids, capable de traverser les plans. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat.
 

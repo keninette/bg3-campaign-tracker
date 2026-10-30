@@ -143,6 +143,120 @@
   text-decoration: none;
 }
 
+/* Admin page: entries not available to players yet */
+.lore-unavailable > a {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+/* Admin page: eye icon showing whether players can see the entry */
+.lore-access svg {
+  width: 1em;
+  height: 1em;
+  margin-right: 0.4em;
+  vertical-align: -0.125em;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.8;
+}
+
+.lore-access-hidden,
+.lore-unavailable .lore-access-shown {
+  display: none;
+}
+
+.lore-unavailable .lore-access-hidden {
+  display: inline;
+  opacity: 0.6;
+}
+
+.reveal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem 1rem;
+  margin: 0 0 1.5rem;
+}
+
+.reveal button {
+  padding: 0.35rem 1rem;
+  border: 1px solid #98734280;
+  background: #98734226;
+  color: #422b1b;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.reveal button:hover,
+.reveal button:focus-visible {
+  border-color: #79552f;
+}
+
+.reveal button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.token-dialog {
+  max-width: min(26rem, calc(100vw - 2rem));
+  padding: 1.25rem;
+  border: 1px solid #98734280;
+  background: #f4e6c8;
+  color: #422b1b;
+  font: inherit;
+}
+
+.token-dialog::backdrop {
+  background: #00000080;
+}
+
+.token-dialog label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.token-dialog input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.4rem;
+  border: 1px solid #98734280;
+  background: #fffaf0;
+  color: inherit;
+  font: inherit;
+}
+
+.token-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.token-dialog button {
+  padding: 0.35rem 1rem;
+  border: 1px solid #98734280;
+  background: #98734226;
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.token-dialog button:hover,
+.token-dialog button:focus-visible {
+  border-color: #79552f;
+}
+
+.reveal-status {
+  color: #67492d;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
 [hidden] {
   display: none !important;
 }

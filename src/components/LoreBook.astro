@@ -1,0 +1,117 @@
+---
+import { getCollection, render } from "astro:content";
+import RevealButton from "./RevealButton.astro";
+import "../styles/lore.css";
+import { homeUrl } from "../lib/sessions";
+
+interface Props {
+  // Shows the entries not available to players yet, with a button to reveal them.
+  admin?: boolean;
+}
+
+const { admin = false } = Astro.props;
+
+// Lowercase and strip accents so "é" matches "e" in search and grouping.
+function normalize(text: string): string {
+  return text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+}
+
+const entries = (
+  await getCollection("lore", (entry) => admin || entry.data.available)
+).sort((a, b) =>
+  a.data.title.localeCompare(b.data.title, "fr", { sensitivity: "base" }),
+);
+
+const rendered = await Promise.all(
+  entries.map(async (entry) => ({ entry, ...(await render(entry)) })),
+);
+
+const groups = new Map<string, typeof entries>();
+for (const entry of entries) {
+  const letter = normalize(entry.data.title).charAt(0).toUpperCase();
+  groups.set(letter, [...(groups.get(letter) ?? []), entry]);
+}
+---
+<section class="lore-index" id="lore-index">
+  <div class="lore-search-field">
+    <svg class="lore-search-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="10" cy="10" r="6.5" />
+      <path d="M15 15l6 6" />
+    </svg>
+    <input
+      class="lore-search"
+      id="lore-search"
+      type="search"
+      placeholder="Rechercher…"
+      aria-label="Rechercher dans le lore"
+      autocomplete="off"
+    />
+    <button
+      class="lore-search-clear"
+      id="lore-search-clear"
+      type="button"
+      aria-label="Effacer la recherche"
+      hidden
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+  </div>
+
+  {
+    [...groups].map(([letter, items]) => (
+      <section class="lore-group" data-group>
+        <h2 class="lore-letter">{letter}</h2>
+        <ul>
+          {items.map((entry) => (
+            <li data-entry={entry.id} class:list={{ "lore-unavailable": !entry.data.available }}>
+              {admin && (
+                <span class="lore-access">
+                  <svg class="lore-access-shown" viewBox="0 0 24 24" role="img" aria-label="Visible par les joueurs">
+                    <title>Visible par les joueurs</title>
+                    <path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  <svg class="lore-access-hidden" viewBox="0 0 24 24" role="img" aria-label="Caché aux joueurs">
+                    <title>Caché aux joueurs</title>
+                    <path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z" />
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M4 4l16 16" />
+                  </svg>
+                </span>
+              )}
+              <a href={`#${entry.id}`}>{entry.data.title}</a>
+              <p class="lore-snippet" hidden />
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+
+  <p class="lore-empty" id="lore-empty" hidden>Aucun résultat.</p>
+
+  <nav class="book-nav" aria-label="Navigation">
+    <a href={homeUrl}>
+      <span class="book-nav-title">← Retour à l'accueil</span>
+    </a>
+  </nav>
+</section>
+
+{
+  rendered.map(({ entry, Content }) => (
+    <article class="chapter lore-article" id={entry.id} hidden>
+      <h2 class="chapter-label">{entry.data.title}</h2>
+      {admin && <RevealButton path={entry.filePath!} available={entry.data.available} />}
+      <div class="chapter-body">
+        <Content />
+      </div>
+      <a class="lore-back" href="#">← Retour à l'index</a>
+    </article>
+  ))
+}
+
+<script>
+  import "../scripts/lore";
+</script>

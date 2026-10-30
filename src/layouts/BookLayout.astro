@@ -3,6 +3,7 @@ import "../styles/page.css";
 import BaseLayout from "./BaseLayout.astro";
 import PaperStains from "../components/PaperStains.astro";
 import Breadcrumb, { type Crumb } from "../components/Breadcrumb.astro";
+import ScrollButton from "../components/ScrollButton.astro";
 import { homeUrl } from "../lib/sessions";
 
 interface Props {
@@ -16,21 +17,24 @@ const { title, eyebrow, breadcrumb } = Astro.props;
 <BaseLayout title={title}>
   <slot name="head" slot="head" />
   <div class="book-scene">
-    <main class="book-page">
-      <div class="book-sheet">
-        <PaperStains />
-        <Breadcrumb crumbs={breadcrumb} />
-        <header class="book-header">
-          {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-          <h1>
-            <a class="title-link" href={homeUrl} title="Retour à l'accueil">
-              Contes et légendes de la Côte des Épées
-            </a>
-          </h1>
-          <div class="ornament" aria-hidden="true">✦</div>
-        </header>
-        <slot />
-      </div>
-    </main>
+    <div class="book-frame">
+      <main class="book-page">
+        <div class="book-sheet">
+          <PaperStains />
+          <Breadcrumb crumbs={breadcrumb} />
+          <header class="book-header">
+            {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+            <h1>
+              <a class="title-link" href={homeUrl} title="Retour à l'accueil">
+                Contes et légendes de la Côte des Épées
+              </a>
+            </h1>
+            <div class="ornament" aria-hidden="true">✦</div>
+          </header>
+          <slot />
+        </div>
+      </main>
+      <ScrollButton />
+    </div>
   </div>
 </BaseLayout>

@@ -1,0 +1,43 @@
+/* Sits over the bottom-right corner of the book page, outside its scrolling area */
+.scroll-button {
+  position: absolute;
+  right: 1.9rem;
+  bottom: 1.9rem;
+  z-index: 2;
+}
+
+.scroll-button[hidden] {
+  display: none;
+}
+
+.scroll-button button {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  border: 1px solid #98734280;
+  border-radius: 50%;
+  background: #f0e3c3e6;
+  box-shadow: 0 0.2rem 0.6rem #4e321f33;
+  color: #79552f;
+  font-size: 0.95rem;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.scroll-button button:hover,
+.scroll-button button:focus-visible {
+  border-color: #79552f;
+  color: #422b1b;
+  opacity: 1;
+  outline: none;
+}
+
+@media (max-width: 600px) {
+  .scroll-button {
+    right: 1rem;
+    bottom: 1rem;
+  }
+}

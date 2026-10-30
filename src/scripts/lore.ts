@@ -2,7 +2,6 @@ import { normalize } from "../lib/normalize";
 
 const index = document.querySelector<HTMLElement>("#lore-index");
 const search = document.querySelector<HTMLInputElement>("#lore-search");
-const clear = document.querySelector<HTMLButtonElement>("#lore-search-clear");
 const empty = document.querySelector<HTMLElement>("#lore-empty");
 const articles = document.querySelectorAll<HTMLElement>(".lore-article");
 const groups = document.querySelectorAll<HTMLElement>("[data-group]");
@@ -86,7 +85,6 @@ const items = [...document.querySelectorAll<HTMLElement>("[data-entry]")].map((i
 });
 
 function filter() {
-  if (clear) clear.hidden = !search?.value;
   const query = normalize(search?.value.trim() ?? "");
   for (const { item, link, excerpt, title, body } of items) {
     const inTitle = query ? find(title, query) : null;
@@ -113,20 +111,4 @@ function filter() {
 
 window.addEventListener("hashchange", showFromHash);
 search?.addEventListener("input", filter);
-
-function clearSearch() {
-  if (!search) return;
-  search.value = "";
-  filter();
-  search.focus();
-}
-
-clear?.addEventListener("click", clearSearch);
-// Escape clears in every browser, not only those with a native search field.
-search?.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && search.value) {
-    event.preventDefault();
-    clearSearch();
-  }
-});
 showFromHash();

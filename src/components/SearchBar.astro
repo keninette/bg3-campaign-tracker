@@ -1,0 +1,32 @@
+---
+import "@fortawesome/fontawesome-free/css/fontawesome.min.css";
+import "@fortawesome/fontawesome-free/css/solid.min.css";
+import "../styles/search-bar.css";
+
+interface Props {
+  // Id of the input, for the page script to listen to its `input` events.
+  id: string;
+  label: string;
+  placeholder?: string;
+}
+
+const { id, label, placeholder = "Rechercher…" } = Astro.props;
+---
+<search-bar class="search-bar">
+  <i class="search-bar-icon fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+  <input
+    class="search-bar-input"
+    id={id}
+    type="search"
+    placeholder={placeholder}
+    aria-label={label}
+    autocomplete="off"
+  />
+  <button class="search-bar-clear" type="button" aria-label="Effacer la recherche" hidden>
+    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+  </button>
+</search-bar>
+
+<script>
+  import "../scripts/search-bar";
+</script>

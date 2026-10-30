@@ -6,96 +6,6 @@
   font-size: clamp(1.04rem, 2vw, 1.16rem);
 }
 
-.lore-search-field {
-  position: relative;
-  margin: 0 0 2rem;
-  color: #987342;
-  transition: color 0.2s;
-}
-
-.lore-search-field:focus-within {
-  color: #79552f;
-}
-
-.lore-search-field svg {
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-width: 1.8;
-}
-
-.lore-search-icon {
-  position: absolute;
-  top: 50%;
-  left: 0.2rem;
-  width: 1.1em;
-  height: 1.1em;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
-.lore-search {
-  display: block;
-  width: 100%;
-  padding: 0.5rem 2.2rem;
-  border: 0;
-  border-bottom: 1px solid #98734280;
-  border-radius: 0;
-  background: transparent;
-  color: #382719;
-  font: inherit;
-  font-style: italic;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  appearance: none;
-}
-
-.lore-search:focus {
-  outline: none;
-  border-bottom-color: #79552f;
-  box-shadow: 0 1px 0 #79552f;
-}
-
-/* Replaced by .lore-search-clear */
-.lore-search::-webkit-search-cancel-button {
-  appearance: none;
-}
-
-.lore-search-clear {
-  position: absolute;
-  top: 50%;
-  right: 0.1rem;
-  display: grid;
-  place-items: center;
-  width: 1.8rem;
-  height: 1.8rem;
-  padding: 0;
-  border: 1px solid transparent;
-  border-radius: 50%;
-  background: transparent;
-  color: inherit;
-  transform: translateY(-50%);
-  cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-}
-
-.lore-search-clear svg {
-  width: 0.9rem;
-  height: 0.9rem;
-}
-
-.lore-search-clear:hover,
-.lore-search-clear:focus-visible {
-  border-color: #98734280;
-  background: #98734226;
-  color: #422b1b;
-  outline: none;
-}
-
-.lore-search::placeholder {
-  color: #79552f;
-  opacity: 0.7;
-}
-
 .lore-group + .lore-group {
   margin-top: 1.6rem;
 }
@@ -150,15 +60,11 @@
 }
 
 /* Admin page: eye icon showing whether players can see the entry */
-.lore-access svg {
-  width: 1em;
-  height: 1em;
-  margin-right: 0.4em;
-  vertical-align: -0.125em;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-width: 1.8;
+.lore-access i {
+  width: 1.25em;
+  margin-right: 0.3em;
+  font-size: 0.85em;
+  text-align: center;
 }
 
 .lore-access-hidden,
@@ -167,7 +73,7 @@
 }
 
 .lore-unavailable .lore-access-hidden {
-  display: inline;
+  display: inline-block;
   opacity: 0.6;
 }
 

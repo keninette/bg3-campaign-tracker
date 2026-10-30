@@ -1,6 +1,9 @@
 ---
 import { getCollection, render } from "astro:content";
 import RevealButton from "./RevealButton.astro";
+import SearchBar from "./SearchBar.astro";
+import "@fortawesome/fontawesome-free/css/fontawesome.min.css";
+import "@fortawesome/fontawesome-free/css/solid.min.css";
 import "../styles/lore.css";
 import { homeUrl } from "../lib/sessions";
 import { normalize } from "../lib/normalize";
@@ -29,31 +32,7 @@ for (const entry of entries) {
 }
 ---
 <section class="lore-index" id="lore-index">
-  <div class="lore-search-field">
-    <svg class="lore-search-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="10" cy="10" r="6.5" />
-      <path d="M15 15l6 6" />
-    </svg>
-    <input
-      class="lore-search"
-      id="lore-search"
-      type="search"
-      placeholder="Rechercher…"
-      aria-label="Rechercher dans le lore"
-      autocomplete="off"
-    />
-    <button
-      class="lore-search-clear"
-      id="lore-search-clear"
-      type="button"
-      aria-label="Effacer la recherche"
-      hidden
-    >
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M6 6l12 12M18 6L6 18" />
-      </svg>
-    </button>
-  </div>
+  <SearchBar id="lore-search" label="Rechercher dans le lore" />
 
   {
     [...groups].map(([letter, items]) => (
@@ -64,17 +43,8 @@ for (const entry of entries) {
             <li data-entry={entry.id} class:list={{ "lore-unavailable": !entry.data.available }}>
               {admin && (
                 <span class="lore-access">
-                  <svg class="lore-access-shown" viewBox="0 0 24 24" role="img" aria-label="Visible par les joueurs">
-                    <title>Visible par les joueurs</title>
-                    <path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                  <svg class="lore-access-hidden" viewBox="0 0 24 24" role="img" aria-label="Caché aux joueurs">
-                    <title>Caché aux joueurs</title>
-                    <path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z" />
-                    <circle cx="12" cy="12" r="3" />
-                    <path d="M4 4l16 16" />
-                  </svg>
+                  <i class="lore-access-shown fa-solid fa-eye" role="img" aria-label="Visible par les joueurs" title="Visible par les joueurs"></i>
+                  <i class="lore-access-hidden fa-solid fa-eye-slash" role="img" aria-label="Caché aux joueurs" title="Caché aux joueurs"></i>
                 </span>
               )}
               <a href={`#${entry.id}`}>{entry.data.title}</a>

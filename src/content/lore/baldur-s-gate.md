@@ -1,5 +1,6 @@
 ---
 title: Baldur's Gate
+available: true
 ---
 Cité marchande accrochée aux falaises de la Chionthar, Baldur's Gate prospère autant par son port que par ses secrets. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.
 

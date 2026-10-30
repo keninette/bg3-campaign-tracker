@@ -1,5 +1,6 @@
 ---
 title: La tisane de Tante Ethel
+available: true
 ---
 Une maison de thé accueillante au bord du marais, tenue par une vieille dame au sourire trop large. At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium.
 

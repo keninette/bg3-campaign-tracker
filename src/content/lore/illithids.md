@@ -1,5 +1,6 @@
 ---
 title: Illithids
+available: true
 ---
 Les flagelleurs mentaux se reproduisent en implantant leurs têtards dans des hôtes vivants. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.
 

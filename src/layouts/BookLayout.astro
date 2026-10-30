@@ -12,6 +12,7 @@ interface Props {
 const { title, eyebrow } = Astro.props;
 ---
 <BaseLayout title={title}>
+  <slot name="head" slot="head" />
   <div class="book-scene">
     <main class="book-page">
       <div class="book-sheet">

@@ -1,5 +1,6 @@
 ---
 title: Bosquet druidique
+available: true
 ---
 Caché au cœur des bois, le bosquet abrite un cercle de druides et les réfugiés qu'ils tolèrent à peine. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
 

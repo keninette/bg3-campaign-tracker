@@ -17,6 +17,8 @@ const lore = defineCollection({
   loader: glob({ base: "./src/content/lore", pattern: "**/*.md" }),
   schema: z.object({
     title: z.string(),
+    // Only available entries are shown on the lore page.
+    available: z.boolean().default(false),
   }),
 });
 

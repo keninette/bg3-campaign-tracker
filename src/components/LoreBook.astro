@@ -1,0 +1,83 @@
+---
+import { getCollection, render } from "astro:content";
+import RevealButton from "./RevealButton.astro";
+import SearchBar from "./SearchBar.astro";
+import "@fortawesome/fontawesome-free/css/fontawesome.min.css";
+import "@fortawesome/fontawesome-free/css/solid.min.css";
+import "../styles/lore.css";
+import { homeUrl } from "../lib/sessions";
+import { normalize } from "../lib/normalize";
+
+interface Props {
+  // Shows the entries not available to players yet, with a button to reveal them.
+  admin?: boolean;
+}
+
+const { admin = false } = Astro.props;
+
+const entries = (
+  await getCollection("lore", (entry) => admin || entry.data.available)
+).sort((a, b) =>
+  a.data.title.localeCompare(b.data.title, "fr", { sensitivity: "base" }),
+);
+
+const rendered = await Promise.all(
+  entries.map(async (entry) => ({ entry, ...(await render(entry)) })),
+);
+
+const groups = new Map<string, typeof entries>();
+for (const entry of entries) {
+  const letter = normalize(entry.data.title).charAt(0).toUpperCase();
+  groups.set(letter, [...(groups.get(letter) ?? []), entry]);
+}
+---
+<section class="lore-index" id="lore-index">
+  <SearchBar id="lore-search" label="Rechercher dans le lore" />
+
+  {
+    [...groups].map(([letter, items]) => (
+      <section class="lore-group" data-group>
+        <h2 class="lore-letter">{letter}</h2>
+        <ul>
+          {items.map((entry) => (
+            <li data-entry={entry.id} class:list={{ "lore-unavailable": !entry.data.available }}>
+              {admin && (
+                <span class="lore-access">
+                  <i class="lore-access-shown fa-solid fa-eye" role="img" aria-label="Visible par les joueurs" title="Visible par les joueurs"></i>
+                  <i class="lore-access-hidden fa-solid fa-eye-slash" role="img" aria-label="Caché aux joueurs" title="Caché aux joueurs"></i>
+                </span>
+              )}
+              <a href={`#${entry.id}`}>{entry.data.title}</a>
+              <p class="lore-snippet" hidden />
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+
+  <p class="lore-empty" id="lore-empty" hidden>Aucun résultat.</p>
+
+  <nav class="book-nav" aria-label="Navigation">
+    <a href={homeUrl}>
+      <span class="book-nav-title">← Retour à l'accueil</span>
+    </a>
+  </nav>
+</section>
+
+{
+  rendered.map(({ entry, Content }) => (
+    <article class="chapter lore-article" id={entry.id} hidden>
+      <h2 class="chapter-label">{entry.data.title}</h2>
+      {admin && <RevealButton path={entry.filePath!} available={entry.data.available} />}
+      <div class="chapter-body">
+        <Content />
+      </div>
+      <a class="lore-back" href="#">← Retour à l'index</a>
+    </article>
+  ))
+}
+
+<script>
+  import "../scripts/lore";
+</script>

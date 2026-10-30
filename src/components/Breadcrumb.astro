@@ -1,0 +1,32 @@
+---
+import { homeUrl } from "../lib/sessions";
+
+export interface Crumb {
+  label: string;
+  // Omitted for the current page.
+  href?: string;
+}
+
+interface Props {
+  // The trail after "Accueil", ending with the current page.
+  crumbs: Crumb[];
+}
+
+const { crumbs } = Astro.props;
+const trail: Crumb[] = [{ label: "Accueil", href: homeUrl }, ...crumbs];
+---
+<nav class="breadcrumb" aria-label="Fil d'Ariane">
+  <ol>
+    {
+      trail.map(({ label, href }, i) => (
+        <li>
+          {i === trail.length - 1 ? (
+            <span aria-current="page">{label}</span>
+          ) : (
+            <a href={href}>{label}</a>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>

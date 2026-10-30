@@ -5,6 +5,7 @@ import BookLayout from "../layouts/BookLayout.astro";
 import {
   getSessionNumbers,
   getSessionTexts,
+  pageUrl,
   sessionUrl,
 } from "../lib/sessions";
 
@@ -35,6 +36,7 @@ const olderTitle = await firstTitle(older);
 <BookLayout
   title={`Contes et légendes de la Côte des Épées, Vol. XI · Chapitre ${session}`}
   eyebrow={`Chroniques de la Côte des Épées · Chapitre ${session}`}
+  breadcrumb={[{ label: "Sommaire", href: pageUrl("summary") }, { label: `Chapitre ${session}` }]}
 >
   {
     rendered.map(({ text, Content }) => (
